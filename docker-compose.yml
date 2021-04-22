@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   golang_ecs_mongo:
-    image: mongo:latest
+    image: mongo:3.6
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -9,7 +9,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./data:/data/db
+      - ./mongo:/data/db
 
 volumes:
-  data:
+  mongo:

@@ -6,23 +6,24 @@ import (
 	"log"
 	"time"
 
+	"github.com/brianfromlife/golang-ecs/server/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type mongoClient struct {
-	client *mongo.Client
-	ctx    context.Context
+type Connection struct {
+	Client *mongo.Client
+	Ctx    context.Context
 }
 
-func New() mongoClient {
+func NewConnection(cfg *config.Settings) Connection {
 
 	uri := "mongodb://localhost:27017/golang_ecs"
 
 	credentials := options.Credential{
-		Username: "root",
-		Password: "password",
+		Username: cfg.DbUser,
+		Password: cfg.DbPassword,
 	}
 
 	clientOpts := options.Client().ApplyURI(uri).SetAuth(credentials)
@@ -41,12 +42,8 @@ func New() mongoClient {
 
 	fmt.Println("connected to database.")
 
-	return mongoClient{
-		client: client,
-		ctx:    ctx,
+	return Connection{
+		Client: client,
+		Ctx:    ctx,
 	}
-}
-
-func (mc mongoClient) DisconnectClient() {
-	mc.client.Disconnect(mc.ctx)
 }
