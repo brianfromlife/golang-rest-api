@@ -10,6 +10,7 @@ import (
 type App struct {
 	server *echo.Echo
 	data   data.IDataProvider
+	cfg    *config.Settings
 }
 
 func New(cfg *config.Settings, db *mongo.Client) App {
@@ -18,6 +19,7 @@ func New(cfg *config.Settings, db *mongo.Client) App {
 	return App{
 		server: server,
 		data:   data,
+		cfg:    cfg,
 	}
 }
 
