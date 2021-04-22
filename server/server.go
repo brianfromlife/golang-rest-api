@@ -9,22 +9,16 @@ import (
 
 type App struct {
 	server *echo.Echo
-	cfg    *config.Settings
-	db     *mongo.Client
 	data   data.IDataProvider
 }
 
 func New(cfg *config.Settings, db *mongo.Client) App {
 	server := echo.New()
+	data := data.New(cfg, db)
 	return App{
 		server: server,
-		cfg:    cfg,
-		db:     db,
+		data:   data,
 	}
-}
-
-func (a App) ConfigureServices() {
-	a.data = data.New(a.cfg, a.db)
 }
 
 func (a App) ConfigureRoutes() {

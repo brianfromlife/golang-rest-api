@@ -7,13 +7,12 @@ import (
 
 type IDataProvider interface {
 	IUserProvider
-	IAccountProvider
 }
 
 type DataProvider struct {
-	db *mongo.Client
+	db *mongo.Database
 }
 
-func New(cfg *config.Settings, db *mongo.Client) IDataProvider {
-	return DataProvider{}
+func New(cfg *config.Settings, mongo *mongo.Client) IDataProvider {
+	return DataProvider{db: mongo.Database(cfg.DbName)}
 }
