@@ -1,9 +1,9 @@
-package server
+package api
 
 import (
 	"net/http"
 
-	"github.com/brianfromlife/golang-ecs/server/requests"
+	"github.com/brianfromlife/golang-ecs/api/requests"
 	"github.com/labstack/echo/v4"
 )
 

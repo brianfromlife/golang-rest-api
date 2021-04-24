@@ -1,8 +1,8 @@
-package server
+package api
 
 import (
-	"github.com/brianfromlife/golang-ecs/server/config"
-	"github.com/brianfromlife/golang-ecs/server/data"
+	"github.com/brianfromlife/golang-ecs/api/config"
+	"github.com/brianfromlife/golang-ecs/api/data"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
 )

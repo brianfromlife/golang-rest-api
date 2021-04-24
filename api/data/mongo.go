@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/brianfromlife/golang-ecs/server/config"
+	"github.com/brianfromlife/golang-ecs/api/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"

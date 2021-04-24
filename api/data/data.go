@@ -1,7 +1,7 @@
 package data
 
 import (
-	"github.com/brianfromlife/golang-ecs/server/config"
+	"github.com/brianfromlife/golang-ecs/api/config"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
