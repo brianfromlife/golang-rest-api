@@ -26,8 +26,14 @@ func New(cfg *config.Settings, db *mongo.Client) App {
 }
 
 func (a App) ConfigureRoutes() {
-	a.server.GET("/v1/public/healthy", a.HealthCheck)
-	a.server.POST("/v1/public/account/register", a.RegisterAccount)
+	public := a.server.Group("/v1/public")
+	public.GET("/healthy", a.HealthCheck)
+	public.POST("/account/register", a.RegisterAccount)
+
+	private := a.server.Group("/v1")
+	private.GET("/test", func(c echo.Context) error {
+		return c.String(200, "hhwe")
+	})
 }
 
 func (a App) Start() {
