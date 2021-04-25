@@ -1,12 +1,11 @@
 package requests
 
 import (
-	"github.com/brianfromlife/golang-ecs/server/errors"
-	"github.com/brianfromlife/golang-ecs/server/models"
+	"github.com/brianfromlife/golang-ecs/api/errors"
 	"github.com/labstack/echo/v4"
 )
 
-func ValidateRegisterAccount(c echo.Context) (*models.NewUser, *errors.ApiError) {
+func ValidateRegisterAccount(c echo.Context) (*RegisterAccountRequest, *errors.ApiError) {
 	newUserRequest := new(RegisterAccountRequest)
 	if err := c.Bind(newUserRequest); err != nil {
 		return nil, errors.BindError()
@@ -26,7 +25,7 @@ func ValidateRegisterAccount(c echo.Context) (*models.NewUser, *errors.ApiError)
 		return nil, errors.ValidationError(validationErrors)
 	}
 
-	return &models.NewUser{
+	return &RegisterAccountRequest{
 		Username: newUserRequest.Username,
 		Password: newUserRequest.Password,
 	}, nil

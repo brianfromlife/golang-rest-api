@@ -7,5 +7,9 @@ type Settings struct {
 }
 
 func New() *Settings {
-	return &Settings{}
+	return &Settings{
+		DbUser:     "root",
+		DbPassword: "password",
+		DbName:     "golang_ecs",
+	}
 }

@@ -1,6 +1,8 @@
 package data
 
 import (
+	"context"
+
 	"github.com/brianfromlife/golang-ecs/api/config"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -10,9 +12,11 @@ type IDataProvider interface {
 }
 
 type DataProvider struct {
-	db *mongo.Database
+	userCollection *mongo.Collection
+	todoCollection *mongo.Collection
+	ctx            context.Context
 }
 
 func New(cfg *config.Settings, mongo *mongo.Client) IDataProvider {
-	return DataProvider{db: mongo.Database(cfg.DbName)}
+	return DataProvider{userCollection: mongo.Database(cfg.DbName).Collection("users"), ctx: context.TODO()}
 }
