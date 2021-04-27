@@ -5,12 +5,15 @@ import (
 
 	"github.com/brianfromlife/golang-ecs/pkg/config"
 	"github.com/brianfromlife/golang-ecs/pkg/models"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IUserProvider interface {
 	CreateAcount(user *models.User) error
-	FindByUsername() string
+	UsernameExists(username string) (bool, error)
 }
 
 type UserProvider struct {
@@ -31,6 +34,16 @@ func (u UserProvider) CreateAcount(user *models.User) error {
 	return err
 }
 
-func (u UserProvider) FindByUsername() string {
-	return "string"
+func (u UserProvider) UsernameExists(username string) (bool, error) {
+	var userFound models.User
+	filter := bson.D{primitive.E{Key: "text", Value: username}}
+
+	if err := u.userCollection.FindOne(u.ctx, filter).Decode(&userFound); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false, nil
+		}
+		return false, errors.Wrap(err, "Error finding by username")
+	}
+
+	return true, nil
 }

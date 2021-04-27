@@ -5,6 +5,7 @@ import (
 	"github.com/brianfromlife/golang-ecs/api/data"
 	"github.com/brianfromlife/golang-ecs/api/logger"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -26,6 +27,8 @@ func New(cfg *config.Settings, db *mongo.Client) App {
 }
 
 func (a App) ConfigureRoutes() {
+	a.server.Use(middleware.RequestID())
+	a.server.Use(middleware.Recover())
 	public := a.server.Group("/v1/public")
 	public.GET("/healthy", a.HealthCheck)
 	public.POST("/account/register", a.RegisterAccount)
