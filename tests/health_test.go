@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/brianfromlife/golang-ecs/server"
+	"github.com/brianfromlife/golang-ecs/api"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +15,7 @@ func TestHealhCheck(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	a := server.App{}
+	a := api.App{}
 
 	a.HealthCheck(c)
 

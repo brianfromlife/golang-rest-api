@@ -8,3 +8,6 @@ cover-html:
 
 test:
 	go test github.com/brianfromlife/golang-ecs/tests --coverpkg ./... ./...
+
+build:
+	go build -o main cmd/api/main.go

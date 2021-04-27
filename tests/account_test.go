@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/brianfromlife/golang-ecs/server"
-	"github.com/brianfromlife/golang-ecs/server/errors"
+	"github.com/brianfromlife/golang-ecs/api"
+	"github.com/brianfromlife/golang-ecs/api/errors"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +23,7 @@ func TestCreateAccountSuccess(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	a := server.App{}
+	a := api.App{}
 
 	// Act
 	a.RegisterAccount(c)
@@ -44,7 +44,7 @@ func TestCreateAccountBindError(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	a := server.App{}
+	a := api.App{}
 
 	// Act
 	a.RegisterAccount(c)
@@ -69,7 +69,7 @@ func TestCreateAccountValidation(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	a := server.App{}
+	a := api.App{}
 
 	// Act
 	a.RegisterAccount(c)

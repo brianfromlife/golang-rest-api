@@ -12,6 +12,10 @@ func NewLocal() ILogger {
 	return Logger{}
 }
 
+func NewRelic() ILogger {
+	return Logger{}
+}
+
 func (l Logger) Error(message string, err error) {
 	fmt.Println(message, err.Error())
 }

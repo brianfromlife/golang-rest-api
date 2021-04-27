@@ -10,18 +10,18 @@ import (
 
 type App struct {
 	server *echo.Echo
-	data   data.IDataProvider
+	Data   data.IDataProvider
 	cfg    *config.Settings
 	logger logger.ILogger
 }
 
 func New(cfg *config.Settings, db *mongo.Client) App {
 	server := echo.New()
-	data := data.New(cfg, db)
+	// data := data.New(cfg, db)
 	return App{
 		server: server,
-		data:   data,
-		cfg:    cfg,
+		// Data:   data,
+		cfg: cfg,
 	}
 }
 
@@ -31,6 +31,7 @@ func (a App) ConfigureRoutes() {
 	public.POST("/account/register", a.RegisterAccount)
 
 	private := a.server.Group("/v1")
+	private.Use(ServerHeader)
 	private.GET("/test", func(c echo.Context) error {
 		return c.String(200, "hhwe")
 	})

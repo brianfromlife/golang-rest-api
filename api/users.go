@@ -23,7 +23,7 @@ func (a App) RegisterAccount(c echo.Context) error {
 		Password: user.Password,
 	}
 
-	error := a.data.CreateAcount(newUser)
+	error := a.Data.CreateAcount(newUser)
 
 	if error != nil {
 		a.logger.Error("error creating user", error)
