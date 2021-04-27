@@ -5,10 +5,12 @@ import (
 	"github.com/brianfromlife/golang-ecs/pkg/data"
 	"github.com/brianfromlife/golang-ecs/pkg/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type IUserService interface {
 	CreateAccount(user *models.User) error
+	Login() (string, error)
 }
 
 type UserService struct {
@@ -22,7 +24,6 @@ func NewUserService(cfg *config.Settings, userProvider data.IUserProvider) IUser
 }
 
 func (u UserService) CreateAccount(user *models.User) error {
-	user.ID = primitive.NewObjectID()
 	userExists, err := u.userProvider.UsernameExists(user.Username)
 
 	if err != nil {
@@ -33,6 +34,15 @@ func (u UserService) CreateAccount(user *models.User) error {
 		return err
 	}
 
+	user.ID = primitive.NewObjectID()
+	hash, err := hashPassword(user.Password)
+
+	if err != nil {
+		return err
+	}
+
+	user.Password = hash
+
 	err = u.userProvider.CreateAcount(user)
 
 	if err != nil {
@@ -42,6 +52,28 @@ func (u UserService) CreateAccount(user *models.User) error {
 	return nil
 }
 
-func hashPassword() {
+func (u UserService) Login() (string, error) {
+	return "", nil
+}
 
+func hashPassword(password string) (string, error) {
+
+	passwordBytes := []byte(password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(passwordBytes, 12)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(hashedPassword), nil
+}
+
+func comparePasswordWithHash(password string, hash string) error {
+
+	passwordBytes := []byte(password)
+	hashBytes := []byte(hash)
+
+	err := bcrypt.CompareHashAndPassword(hashBytes, passwordBytes)
+
+	return err
 }
