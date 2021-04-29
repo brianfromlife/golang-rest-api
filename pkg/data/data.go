@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/brianfromlife/golang-ecs/api/config"
+	"github.com/brianfromlife/golang-ecs/pkg/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -19,11 +19,11 @@ type Connection struct {
 
 func NewMongoConnection(cfg *config.Settings) Connection {
 
-	uri := fmt.Sprintf("mongodb://localhost:27017/%s", cfg.DbName)
+	uri := fmt.Sprintf("mongodb://%s/%s", cfg.DbHost, cfg.DbName)
 
 	credentials := options.Credential{
 		Username: cfg.DbUser,
-		Password: cfg.DbPassword,
+		Password: cfg.DbPass,
 	}
 
 	clientOpts := options.Client().ApplyURI(uri).SetAuth(credentials)

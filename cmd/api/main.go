@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"github.com/brianfromlife/golang-ecs/internal/api"
+	"github.com/brianfromlife/golang-ecs/pkg/data"
+)
 
 func main() {
-	fmt.Println("shit")
+	db := data.NewMongoConnection()
+	defer db.Disconnect()
+	application := api.New()
+	application.Start()
 }
