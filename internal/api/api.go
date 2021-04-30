@@ -13,7 +13,6 @@ import (
 
 type App struct {
 	server *echo.Echo
-	cfg    *config.Settings
 }
 
 func New(cfg *config.Settings, client *mongo.Client) *App {
@@ -24,17 +23,16 @@ func New(cfg *config.Settings, client *mongo.Client) *App {
 	logger := logger.NewLogger(cfg)
 
 	userProvider := data.NewUserProvider(cfg, client)
-	userSvc := services.NewUserService(cfg, userProvider)
+	userSvc := services.NewUserService(cfg, logger, userProvider)
 
 	healthHandler := handlers.NewHealthHandler()
-	userHandler := handlers.NewUserHandler(logger, userSvc)
+	userHandler := handlers.NewUserHandler(userSvc)
 
 	server.GET("/v1/public/healthy", healthHandler.HealthCheck)
 	server.POST("/v1/public/account/register", userHandler.Register)
 
 	return &App{
 		server: server,
-		cfg:    cfg,
 	}
 }
 

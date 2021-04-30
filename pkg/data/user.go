@@ -36,8 +36,8 @@ func (u UserProvider) CreateAcount(user *domain.User) error {
 }
 
 func (u UserProvider) UsernameExists(username string) (bool, error) {
-	var userFound domain.User
-	filter := bson.D{primitive.E{Key: "text", Value: username}}
+	var userFound *domain.User
+	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
 	if err := u.userCollection.FindOne(u.ctx, filter).Decode(&userFound); err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -51,7 +51,7 @@ func (u UserProvider) UsernameExists(username string) (bool, error) {
 
 func (u UserProvider) FindByUsername(username string) (*domain.User, error) {
 	var userFound domain.User
-	filter := bson.D{primitive.E{Key: "text", Value: username}}
+	filter := bson.D{primitive.E{Key: "username", Value: username}}
 
 	if err := u.userCollection.FindOne(u.ctx, filter).Decode(&userFound); err != nil {
 		if err == mongo.ErrNoDocuments {
