@@ -20,11 +20,16 @@ func New(cfg *config.Settings, client *mongo.Client) *App {
 
 	server.Use(middleware.Recover())
 
+	// logger
 	logger := logger.NewLogger(cfg)
 
+	// providers
 	userProvider := data.NewUserProvider(cfg, client)
+
+	// services
 	userSvc := services.NewUserService(cfg, logger, userProvider)
 
+	// handlers
 	healthHandler := handlers.NewHealthHandler()
 	userHandler := handlers.NewUserHandler(userSvc)
 
