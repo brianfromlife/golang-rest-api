@@ -15,7 +15,7 @@ type App struct {
 	server *echo.Echo
 }
 
-func New(cfg *config.Settings, client *mongo.Client) *App {
+func Start(cfg *config.Settings, client *mongo.Client) {
 	server := echo.New()
 
 	server.Use(middleware.Recover())
@@ -36,11 +36,5 @@ func New(cfg *config.Settings, client *mongo.Client) *App {
 	server.GET("/v1/public/healthy", healthHandler.HealthCheck)
 	server.POST("/v1/public/account/register", userHandler.Register)
 
-	return &App{
-		server: server,
-	}
-}
-
-func (a App) Start() {
-	a.server.Start(":5000")
+	server.Start(":5000")
 }
