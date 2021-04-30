@@ -18,6 +18,7 @@ type App struct {
 func Start(cfg *config.Settings, client *mongo.Client) {
 	server := echo.New()
 
+	// middleware
 	server.Use(middleware.Recover())
 
 	// logger
