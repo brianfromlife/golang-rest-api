@@ -1,17 +1,18 @@
 package config
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/spf13/viper"
 )
 
 type Settings struct {
-	DbHost string
-	DbPort int32
-	DbName string
-	DbUser string
-	DbPass string
+	DbHost string `mapstructure:"DB_HOST"`
+	DbPort string `mapstructure:"DB_PORT"`
+	DbName string `mapstructure:"DB_NAME"`
+	DbUser string `mapstructure:"DB_USER"`
+	DbPass string `mapstructure:"DB_PASS"`
+	Env    string `mapstructure:"ENV"`
 }
 
 func New() *Settings {
@@ -19,20 +20,20 @@ func New() *Settings {
 	var cfg Settings
 
 	viper.SetConfigFile(".env")
+	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		fmt.Println("No env file, using environment variables.", err)
+		log.Panicln("No env file, using environment variables.", err)
 	}
 
-	cfg.DbHost = viper.GetString("RDS_HOSTNAME")
-	cfg.DbPort = viper.GetInt32("RDS_PORT")
-	cfg.DbName = viper.GetString("RDS_DB_NAME")
-	cfg.DbUser = viper.GetString("RDS_USERNAME")
-	cfg.DbPass = viper.GetString("RDS_PASSWORD")
+	err = viper.Unmarshal(&cfg)
+	if err != nil {
+		log.Fatal("Error trying to unmarshal configuration", err)
+	}
 
 	return &cfg
 }
