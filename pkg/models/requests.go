@@ -1,7 +1,8 @@
-package httpmodels
+package models
 
 import (
-	"github.com/brianfromlife/golang-ecs/pkg/errors"
+	"github.com/brianfromlife/golang-ecs/pkg/domain"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,11 +16,11 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func ValidateRegisterRequest(c echo.Context) (*RegisterRequest, *errors.ApiError) {
+func ValidateRegisterRequest(c echo.Context) (*domain.User, *ApiError) {
 
 	registerRequest := new(RegisterRequest)
 	if err := c.Bind(registerRequest); err != nil {
-		return nil, errors.BindError()
+		return nil, BindError()
 	}
 
 	var validationErrors []string
@@ -33,16 +34,19 @@ func ValidateRegisterRequest(c echo.Context) (*RegisterRequest, *errors.ApiError
 	}
 
 	if len(validationErrors) > 0 {
-		return nil, errors.ValidationError(validationErrors)
+		return nil, ValidationError(validationErrors)
 	}
 
-	return registerRequest, nil
+	return &domain.User{
+		Username: registerRequest.Username,
+		Password: registerRequest.Password,
+	}, nil
 }
 
-func ValidateLoginRequest(c echo.Context) (*LoginRequest, *errors.ApiError) {
+func ValidateLoginRequest(c echo.Context) (*domain.User, *ApiError) {
 	loginRequest := new(LoginRequest)
 	if err := c.Bind(loginRequest); err != nil {
-		return nil, errors.BindError()
+		return nil, BindError()
 	}
 
 	var validationErrors []string
@@ -56,8 +60,11 @@ func ValidateLoginRequest(c echo.Context) (*LoginRequest, *errors.ApiError) {
 	}
 
 	if len(validationErrors) > 0 {
-		return nil, errors.ValidationError(validationErrors)
+		return nil, ValidationError(validationErrors)
 	}
 
-	return loginRequest, nil
+	return &domain.User{
+		Username: loginRequest.Username,
+		Password: loginRequest.Password,
+	}, nil
 }

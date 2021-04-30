@@ -1,49 +1,43 @@
 package api
 
 import (
+	"github.com/brianfromlife/golang-ecs/internal/api/handlers"
 	"github.com/brianfromlife/golang-ecs/pkg/config"
+	"github.com/brianfromlife/golang-ecs/pkg/data"
 	"github.com/brianfromlife/golang-ecs/pkg/logger"
+	"github.com/brianfromlife/golang-ecs/pkg/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type App struct {
 	server *echo.Echo
-	logger logger.ILogger
 	cfg    *config.Settings
 }
 
-func New(cfg *config.Settings) App {
+func New(cfg *config.Settings, client *mongo.Client) *App {
 	server := echo.New()
 
-	return App{
+	server.Use(middleware.Recover())
+
+	logger := logger.NewLogger(cfg)
+
+	userProvider := data.NewUserProvider(cfg, client)
+	userSvc := services.NewUserService(cfg, userProvider)
+
+	healthHandler := handlers.NewHealthHandler()
+	userHandler := handlers.NewUserHandler(logger, userSvc)
+
+	server.GET("/v1/public/healthy", healthHandler.HealthCheck)
+	server.POST("/v1/public/account/register", userHandler.Register)
+
+	return &App{
 		server: server,
 		cfg:    cfg,
 	}
 }
 
-func (a App) configureLogger() {
-	if a.cfg.Env == "development" {
-		logger := logger.NewLocal()
-		a.logger = logger
-	} else {
-		logger := logger.NewLogger("secret")
-		a.logger = logger
-	}
-}
-
-func (a App) configureGlobalMiddleware() {
-	a.server.Use(middleware.Recover())
-
-}
-
-func (a App) setupRoutes() {
-	a.server.GET("/v1/public/healthy", a.HealthCheck)
-}
-
 func (a App) Start() {
-	a.configureLogger()
-	a.configureGlobalMiddleware()
-	a.setupRoutes()
-	a.server.Logger.Fatal(a.server.Start(":5000"))
+	a.server.Start(":5000")
 }

@@ -7,12 +7,14 @@ import (
 )
 
 type Settings struct {
-	DbHost string `mapstructure:"DB_HOST"`
-	DbPort string `mapstructure:"DB_PORT"`
-	DbName string `mapstructure:"DB_NAME"`
-	DbUser string `mapstructure:"DB_USER"`
-	DbPass string `mapstructure:"DB_PASS"`
-	Env    string `mapstructure:"ENV"`
+	DbHost     string `mapstructure:"DB_HOST"`
+	DbPort     string `mapstructure:"DB_PORT"`
+	DbName     string `mapstructure:"DB_NAME"`
+	DbUser     string `mapstructure:"DB_USER"`
+	DbPass     string `mapstructure:"DB_PASS"`
+	Env        string `mapstructure:"ENV"`
+	JwtExpires string `mapstructure:"JWT_EXPIRES"`
+	JwtSecret  string `mapstructure:"JWT_SECRET"`
 }
 
 func New() *Settings {

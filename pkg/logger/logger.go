@@ -1,6 +1,10 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/brianfromlife/golang-ecs/pkg/config"
+)
 
 type ILogger interface {
 	Error(message string, err error)
@@ -11,8 +15,11 @@ type Logger struct {
 	secret string
 }
 
-func NewLogger(secret string) ILogger {
-	return Logger{secret: secret}
+func NewLogger(cfg *config.Settings) ILogger {
+	if cfg.Env == "development" {
+		return NewLocal()
+	}
+	return &Logger{secret: "secret"}
 }
 
 func (l Logger) Error(message string, err error) {

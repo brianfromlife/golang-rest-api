@@ -1,11 +1,10 @@
-package errors
+package models
 
 type ApiError struct {
 	Message    string   `json:"message"`
 	Code       int      `json:"code"`
 	Name       string   `json:"name"`
 	Error      error    `json:"-"`
-	Detail     string   `json:"-"`
 	Validation []string `json:"validation,omitempty"`
 }
 

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/brianfromlife/golang-ecs/pkg/config"
-	"github.com/brianfromlife/golang-ecs/pkg/models"
+	"github.com/brianfromlife/golang-ecs/pkg/domain"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -12,8 +12,9 @@ import (
 )
 
 type IUserProvider interface {
-	CreateAcount(user *models.User) error
+	CreateAcount(user *domain.User) error
 	UsernameExists(username string) (bool, error)
+	FindByUsername(username string) (*domain.User, error)
 }
 
 type UserProvider struct {
@@ -23,19 +24,19 @@ type UserProvider struct {
 
 func NewUserProvider(cfg *config.Settings, mongo *mongo.Client) IUserProvider {
 	userCollection := mongo.Database(cfg.DbName).Collection("users")
-	return UserProvider{
+	return &UserProvider{
 		userCollection: userCollection,
 		ctx:            context.TODO(),
 	}
 }
 
-func (u UserProvider) CreateAcount(user *models.User) error {
+func (u UserProvider) CreateAcount(user *domain.User) error {
 	_, err := u.userCollection.InsertOne(u.ctx, user)
-	return err
+	return errors.Wrap(err, "Error inserting user")
 }
 
 func (u UserProvider) UsernameExists(username string) (bool, error) {
-	var userFound models.User
+	var userFound domain.User
 	filter := bson.D{primitive.E{Key: "text", Value: username}}
 
 	if err := u.userCollection.FindOne(u.ctx, filter).Decode(&userFound); err != nil {
@@ -46,4 +47,18 @@ func (u UserProvider) UsernameExists(username string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (u UserProvider) FindByUsername(username string) (*domain.User, error) {
+	var userFound domain.User
+	filter := bson.D{primitive.E{Key: "text", Value: username}}
+
+	if err := u.userCollection.FindOne(u.ctx, filter).Decode(&userFound); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, "Error finding by username")
+	}
+
+	return &userFound, nil
 }
