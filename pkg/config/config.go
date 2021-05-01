@@ -29,7 +29,7 @@ func New() *Settings {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Panicln("No env file, using environment variables.", err)
+		log.Println("No env file, using environment variables.", err)
 	}
 
 	err = viper.Unmarshal(&cfg)

@@ -16,8 +16,8 @@ import (
 )
 
 type IUserService interface {
-	CreateAccount(user *domain.User) *models.ApiError
-	Login(user *domain.User) (string, *models.ApiError)
+	CreateAccount(user *domain.User) *models.Error
+	Login(user *domain.User) (string, *models.Error)
 }
 
 type UserService struct {
@@ -34,11 +34,11 @@ func NewUserService(cfg *config.Settings, logger logger.ILogger, userProvider da
 	}
 }
 
-func (u UserService) CreateAccount(user *domain.User) *models.ApiError {
+func (u UserService) CreateAccount(user *domain.User) *models.Error {
 	userExists, err := u.userProvider.UsernameExists(user.Username)
 
 	if err != nil {
-		return &models.ApiError{
+		return &models.Error{
 			Code:    500,
 			Name:    "SERVER_ERROR",
 			Message: "Something went wrong",
@@ -48,7 +48,7 @@ func (u UserService) CreateAccount(user *domain.User) *models.ApiError {
 
 	if userExists {
 		u.logger.Info("User exists")
-		return &models.ApiError{
+		return &models.Error{
 			Code:    400,
 			Name:    "USERNAME_TAKEN",
 			Message: "Username already exists",
@@ -59,7 +59,7 @@ func (u UserService) CreateAccount(user *domain.User) *models.ApiError {
 	hash, err := hashPassword(user.Password)
 
 	if err != nil {
-		return &models.ApiError{
+		return &models.Error{
 			Code:    500,
 			Name:    "SERVER_ERROR",
 			Message: "Something went wrong",
@@ -72,7 +72,7 @@ func (u UserService) CreateAccount(user *domain.User) *models.ApiError {
 	err = u.userProvider.CreateAcount(user)
 
 	if err != nil {
-		return &models.ApiError{
+		return &models.Error{
 			Code:    500,
 			Name:    "SERVER_ERROR",
 			Message: "Something went wrong",
@@ -83,10 +83,10 @@ func (u UserService) CreateAccount(user *domain.User) *models.ApiError {
 	return nil
 }
 
-func (u UserService) Login(user *domain.User) (string, *models.ApiError) {
+func (u UserService) Login(user *domain.User) (string, *models.Error) {
 	userFound, err := u.userProvider.FindByUsername(user.Username)
 	if err != nil {
-		return "", &models.ApiError{
+		return "", &models.Error{
 			Code:    500,
 			Name:    "SERVER_ERROR",
 			Message: "Something went wrong",
@@ -95,7 +95,7 @@ func (u UserService) Login(user *domain.User) (string, *models.ApiError) {
 	}
 
 	if userFound == nil {
-		return "", &models.ApiError{
+		return "", &models.Error{
 			Code:    400,
 			Name:    "INVALID_LOGIN",
 			Message: "Your username or password is invalid.",
@@ -105,7 +105,7 @@ func (u UserService) Login(user *domain.User) (string, *models.ApiError) {
 	err = comparePasswordWithHash(user.Password, userFound.Password)
 
 	if err != nil {
-		return "", &models.ApiError{
+		return "", &models.Error{
 			Code:    400,
 			Name:    "INVALID_LOGIN",
 			Message: "Your username or password is invalid.",
@@ -114,7 +114,7 @@ func (u UserService) Login(user *domain.User) (string, *models.ApiError) {
 	token, err := u.createJwtToken(userFound.ID.String())
 
 	if err != nil {
-		return "", &models.ApiError{
+		return "", &models.Error{
 			Code:    500,
 			Name:    "SERVER_ERROR",
 			Message: "Something went wrong",

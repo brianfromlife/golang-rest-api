@@ -1,13 +1,7 @@
 cmd
  - api
-   - main.go
 internal
  - api
-    - health.go
-    - api.go
 pkg
- - data
-    - data.go
- - models
 go.mod
 go.sum 

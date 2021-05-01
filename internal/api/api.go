@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/brianfromlife/golang-ecs/internal/api/handlers"
 	"github.com/brianfromlife/golang-ecs/pkg/config"
 	"github.com/brianfromlife/golang-ecs/pkg/data"
 	"github.com/brianfromlife/golang-ecs/pkg/logger"
@@ -12,10 +11,12 @@ import (
 )
 
 type App struct {
-	server *echo.Echo
+	server  *echo.Echo
+	logger  logger.ILogger
+	userSvc services.IUserService
 }
 
-func Start(cfg *config.Settings, client *mongo.Client) {
+func New(cfg *config.Settings, client *mongo.Client) *App {
 	server := echo.New()
 
 	// middleware
@@ -30,12 +31,19 @@ func Start(cfg *config.Settings, client *mongo.Client) {
 	// services
 	userSvc := services.NewUserService(cfg, logger, userProvider)
 
-	// handlers
-	healthHandler := handlers.NewHealthHandler()
-	userHandler := handlers.NewUserHandler(userSvc)
+	return &App{
+		server:  server,
+		logger:  logger,
+		userSvc: userSvc,
+	}
+}
 
-	server.GET("/v1/public/healthy", healthHandler.HealthCheck)
-	server.POST("/v1/public/account/register", userHandler.Register)
+func (a App) ConfigureRoutes() {
+	a.server.GET("/v1/public/healthy", a.HealthCheck)
+	a.server.POST("/v1/public/account/register", a.Register)
+}
 
-	server.Start(":5000")
+func (a App) Start() {
+	a.ConfigureRoutes()
+	a.server.Start(":5000")
 }

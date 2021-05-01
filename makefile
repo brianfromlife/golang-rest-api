@@ -1,5 +1,5 @@
 run:
-	go build -o bin/main cmd/api/main.go && ./bin/main
+	go build -o bin/main cmd/api/main.go && DB_PASS=test ./bin/main
 cover: 
 	go test -coverpkg ./... ./... -coverprofile=coverage.out
 

@@ -16,7 +16,7 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func ValidateRegisterRequest(c echo.Context) (*domain.User, *ApiError) {
+func ValidateRegisterRequest(c echo.Context) (*domain.User, *Error) {
 
 	registerRequest := new(RegisterRequest)
 	if err := c.Bind(registerRequest); err != nil {
@@ -43,7 +43,7 @@ func ValidateRegisterRequest(c echo.Context) (*domain.User, *ApiError) {
 	}, nil
 }
 
-func ValidateLoginRequest(c echo.Context) (*domain.User, *ApiError) {
+func ValidateLoginRequest(c echo.Context) (*domain.User, *Error) {
 	loginRequest := new(LoginRequest)
 	if err := c.Bind(loginRequest); err != nil {
 		return nil, BindError()
