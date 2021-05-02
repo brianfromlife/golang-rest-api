@@ -32,7 +32,10 @@ func NewUserProvider(cfg *config.Settings, mongo *mongo.Client) IUserProvider {
 
 func (u UserProvider) CreateAcount(user *domain.User) error {
 	_, err := u.userCollection.InsertOne(u.ctx, user)
-	return errors.Wrap(err, "Error inserting user")
+	if err != nil {
+		return errors.Wrap(err, "Error inserting user")
+	}
+	return nil
 }
 
 func (u UserProvider) UsernameExists(username string) (bool, error) {
