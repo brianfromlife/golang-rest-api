@@ -7,7 +7,6 @@ import (
 	"github.com/brianfromlife/golang-ecs/pkg/config"
 	"github.com/brianfromlife/golang-ecs/pkg/data"
 	"github.com/brianfromlife/golang-ecs/pkg/domain"
-	"github.com/brianfromlife/golang-ecs/pkg/logger"
 	"github.com/brianfromlife/golang-ecs/pkg/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
@@ -23,14 +22,12 @@ type IUserService interface {
 type UserService struct {
 	userProvider data.IUserProvider
 	cfg          *config.Settings
-	logger       logger.ILogger
 }
 
-func NewUserService(cfg *config.Settings, logger logger.ILogger, userProvider data.IUserProvider) IUserService {
+func NewUserService(cfg *config.Settings, userProvider data.IUserProvider) IUserService {
 	return &UserService{
 		userProvider: userProvider,
 		cfg:          cfg,
-		logger:       logger,
 	}
 }
 
@@ -47,7 +44,7 @@ func (u UserService) CreateAccount(user *domain.User) *models.Error {
 	}
 
 	if userExists {
-		u.logger.Info("User exists")
+
 		return &models.Error{
 			Code:    400,
 			Name:    "USERNAME_TAKEN",
@@ -111,7 +108,8 @@ func (u UserService) Login(user *domain.User) (string, *models.Error) {
 			Message: "Your username or password is invalid.",
 		}
 	}
-	token, err := u.createJwtToken(userFound.ID.String())
+
+	token, err := u.createJwtToken(userFound.ID.Hex())
 
 	if err != nil {
 		return "", &models.Error{
