@@ -1,7 +1,0 @@
-cmd
- - api
-internal
- - api
-pkg
-go.mod
-go.sum 
