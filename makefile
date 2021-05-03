@@ -3,5 +3,4 @@ run:
 
 
 test:
-	go test ./internal/api
-	go test ./pkg/services
+	go test ./... | { grep -v 'no test files'; true; }
